@@ -137,10 +137,11 @@ flex:  0 0 75%;
    background: #86bb71;
 }
  .chat .chat-history .other-message {
-   background: #000;
+   background: #fff;
+     color: black;
 }
  .chat .chat-history .other-message:after {
-   border-bottom-color: #000;
+   border-bottom-color: #fff;
    left: 93%;
 }
  .chat .chat-message {

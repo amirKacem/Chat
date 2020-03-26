@@ -85,7 +85,7 @@ class Messages
     }
 
     public function getAllUserMsg(){
-        $sql = "SELECT  m.content,m.date_send,u.username,u.image_path,u.type,u.loginStatus,u.lastLogin from messages m join users u on m.user_id=u.id";
+        $sql = "SELECT  m.content,m.date_send,u.username,u.image_path,u.type,u.loginStatus,u.lastLogin from messages m join users u on m.user_id=u.id order by m.date_send";
 
         return $this->db->query($sql)->results();
 

@@ -42,7 +42,6 @@ conn.onmessage = function(e) {
         // prevent form submission which causes page reload
         e.preventDefault();
         var textarea = $(this).find('textarea');
-        console.log(textarea);
         if(textarea.val().trim(' ')!==''){
             console.log("test");
         // send message to server
@@ -57,6 +56,27 @@ conn.onmessage = function(e) {
         //conn.send(JSON.stringify(message));
         }
     });
+    $("#message-to-send").keypress(function (e) {
+        var code = (e.keyCode ? e.keyCode : e.which);
+        //alert(code);
+        if (code == 13) {
+            e.preventDefault();
+            if ($(this).val().trim(' ') !== '') {
+                // send message to server
+                data = {
+                    'action': "send_msg",
+                    'user_id': user_id,
+                    'content': $(this).val()
+                };
+                chat.msg = data;
+                chat.sendMessage();
+                $(this).val('');
+
+
+            }
+        }
+    });
+
 
     var chat = {
         msg: {},
@@ -66,7 +86,7 @@ conn.onmessage = function(e) {
             this.scrollToBottom();
         },
         render: function(data) {
-            console.log(data);
+
             var html='',status;
             if(data.loginStatus==1){
                 status='online';

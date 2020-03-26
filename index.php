@@ -122,9 +122,9 @@ require dirname(__DIR__) . '/Chat/vendor/autoload.php';
                 <div class="chat-message clearfix">
                     <form class="message-form">
                         <input type="hidden" name="user_id" id="user_id" value="<?= $currentUser->id ?>">
-                    <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="3"></textarea>
+                    <textarea name="message-to-send" id="message-to-send" placeholder ="message" rows="3"></textarea>
 
-                    <button>Send</button>
+                    <button>Envoye</button>
                     </form>
 
                 </div> <!-- end chat-message -->
