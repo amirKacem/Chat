@@ -1,0 +1,5 @@
+access.log
+ProductionDatabaseInformation.txt
+vendor
+.idea
+.composer.json.swp
