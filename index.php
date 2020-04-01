@@ -123,12 +123,7 @@ require dirname(__DIR__) . '/Chat/vendor/autoload.php';
             </div>
         </div> <!-- end chat -->
     </div>
-    <footer>
-        <div class="footer-content">
-        <img src="img/audiotel.jpg" alt="voyance audiotel">
-        <img src="img/privée.jpg" alt="voyance audiotel">
-        </div>
-    </footer>
+
 </div> <!-- end container -->
 
 <script
