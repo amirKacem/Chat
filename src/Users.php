@@ -136,7 +136,7 @@ VALUES (null, ?, ?, ?, ?,?,?,?)";
         }
 
         public function getAllUsers($condt=[]) {
-            $users = $this->db->findAll('users',[],$condt);
+            $users = $this->db->findAll('users',['username','loginStatus','lastLogin','image_path','type'],$condt);
 
             return $users;
         }

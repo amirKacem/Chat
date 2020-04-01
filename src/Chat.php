@@ -4,26 +4,31 @@ namespace MyChat;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
-use MyChat\Users;
+
 
 class Chat implements MessageComponentInterface {
 
     private $clients;
+    protected $users;
     
-    public function __construct()
+    public function __construct($users)
     {
         // initialize clients storage
         $this->clients = new \SplObjectStorage;
+        $this->users = $users;
     }
 
     public function onOpen(ConnectionInterface $conn)
     {
         // store new connection in clients
         $this->clients->attach($conn);
-        printf("New connection: %s\n", $conn->resourceId);
 
+        $voyants = $this->users->getAllUsers(['type'=>'V']);
         // send a welcome message to the client that just connected
-        $conn->send(json_encode(array('type'=>'connect', 'text' => 'Welcome to the test chat app!')));
+        foreach ($this->clients as $client) {
+            $client->send(json_encode(array('type' => 'connect', 'text' => 'Welcome to the test chat app!', 'voyants' => $voyants)));
+        }
+
     }
 
     public function onClose(ConnectionInterface $conn)
@@ -31,6 +36,10 @@ class Chat implements MessageComponentInterface {
         // remove connection from clients
         $this->clients->detach($conn);
         printf("Connection closed: %s\n", $conn->resourceId);
+        $voyants = $this->users->getAllUsers(['type'=>'V']);
+        foreach ($this->clients as $client) {
+            $client->send(json_encode(array('type' => 'disconnect','voyants' => $voyants)));
+        }
     }
 
 

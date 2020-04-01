@@ -32,11 +32,11 @@ require dirname(__DIR__) . '/Chat/vendor/autoload.php';
         <div class="col-3" id="peoples">
             <div class="people-list" >
                 <div class="search">
-                    <input type="text" placeholder="search" />
+                    <input id="search" type="text" placeholder="search" />
                     <i class="fa fa-search"></i>
                 </div>
 
-                <ul class="list">
+                <ul class="list" id="usersList">
                     <?php  foreach ($voyants as $user) {
                         if($user->loginStatus==0){
                             $status  ='offline';
@@ -44,15 +44,7 @@ require dirname(__DIR__) . '/Chat/vendor/autoload.php';
                             $status = 'online';
                         }
                         ?>
-                    <li class="clearfix">
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" />
-                        <div class="about">
-                            <div class="name"><?= $user->username ?></div>
-                            <div class="status">
-                                <i class="fa fa-circle <?= $status ?>"></i> <?= $status ?>
-                            </div>
-                        </div>
-                    </li>
+
 
                     <?php } ?>
 
@@ -92,7 +84,7 @@ require dirname(__DIR__) . '/Chat/vendor/autoload.php';
                                     $result = "<li>
                             <div class='message-data'>
                                 <span class='message-data-name'>
-                                    <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg' class='chat-img' alt='test'>
+                                    <img src='{$message->image_path}' class='chat-img' alt='test'>
                                     <i class='fa fa-circle {$status}'></i>  {$message->username}</span>
                                 <span class='message-data-time'>{$message->date_send}</span>
                             </div>
@@ -131,6 +123,7 @@ require dirname(__DIR__) . '/Chat/vendor/autoload.php';
             </div>
         </div> <!-- end chat -->
     </div>
+
 </div> <!-- end container -->
 
 <script

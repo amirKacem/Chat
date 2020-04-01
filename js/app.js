@@ -1,41 +1,44 @@
 $(function() {
 // connect to the socket server
 
-var conn = new WebSocket('ws://localhost:8080');
+var conn = new WebSocket('ws://localhost:8083');
 
-conn.onopen = function(e) {
-    console.log('Connected to server:', conn);
-    var d = new Date(); // for now
-    datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-    console.log(datetext);
-}
+    conn.onopen = function(e) {
 
-conn.onerror = function(e) {
-    console.log('Error: Could not connect to server.');
-}
+        var d = new Date(); // for now
+        datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
 
-conn.onclose = function(e) {
-    console.log('Connection closed'+e);
-    var timestamp = '[' + Date.now() + '] ';
-    var d = new Date(); // for now
-    datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-    console.log(datetext);
-}
+    }
+
+    conn.onerror = function(e) {
+        console.log('Error: Could not connect to server.');
+    }
+
+    conn.onclose = function(e) {
+        console.log('Connection closed'+e);
+        var timestamp = '[' + Date.now() + '] ';
+        var d = new Date(); // for now
+        datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+        console.log(datetext);
+        location.reload(true);
+
+
+    }
 
 // handle new message received from the socket server
-conn.onmessage = function(e) {
-    // message is data property of event object
-    var message = JSON.parse(e.data);
-    console.log(message);
-  if(message.type=="chat"){
+    conn.onmessage = function(e) {
+        // message is data property of event object
+        var message = JSON.parse(e.data);
+        if(message.type==="chat"){
 
-     chat.render(message.data);
-  }else{
-      console.log(message);
-  }
+            chat.render(message.data);
+        }else if(message.type==="connect" || message.type==="disconnect"){
+
+            chat.renderUsers(message.voyants);
+        }
 
 
-}
+    }
 
     var user_id = $('#user_id').val();
     $('.message-form').on('submit', function(e) {
@@ -44,16 +47,16 @@ conn.onmessage = function(e) {
         var textarea = $(this).find('textarea');
         if(textarea.val().trim(' ')!==''){
             console.log("test");
-        // send message to server
-        data = {
-            'action':"send_msg",
-            'user_id':user_id,
-            'content':textarea.val()
-        };
-        chat.msg = data;
-        chat.sendMessage();
-        textarea.val('');
-        //conn.send(JSON.stringify(message));
+            // send message to server
+            data = {
+                'action':"send_msg",
+                'user_id':user_id,
+                'content':textarea.val()
+            };
+            chat.msg = data;
+            chat.sendMessage();
+            textarea.val('');
+
         }
     });
     $("#message-to-send").keypress(function (e) {
@@ -85,6 +88,31 @@ conn.onmessage = function(e) {
         init: function(){
             this.scrollToBottom();
         },
+        renderUsers:function(users){
+           var result ='';
+            var statut;
+            users.forEach(function(item) {
+
+                if(item.loginStatus==1){
+                    statut = "online";
+                }else{
+                    statut ="offline"
+                }
+                result += `<li class="clearfix">
+                        <img src="${item.image_path}" alt="avatar" width="55" height="55" />
+                        <div class="about">
+                            <div class="name">${item.username}</div>
+                            <div class="status">
+                                <i class="fa fa-circle ${statut}"></i> ${statut}
+                            </div>
+                        </div>
+                    </li>`;
+            });
+
+            $('#usersList').html(result);
+            searchFilter.init();
+
+        },
         render: function(data) {
 
             var html='',status;
@@ -94,7 +122,7 @@ conn.onmessage = function(e) {
                 status='offline';
             }
             if(data.type=="V"){
-            html = `<li>
+                html = `<li>
                 <div class='message-data'>
                 <span class='message-data-name'>
                 <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg' class='chat-img' alt='test'>
@@ -104,14 +132,12 @@ conn.onmessage = function(e) {
             <div class='message my-message'> ${data.content}</div>
             </li>`;
             }else{
-            html = `
-            <li class='clearfix' >
+                html = ` <li class='clearfix' >
                     <div class='message-data align-right' >
                     <span class='message-data-time' > ${data.username} </span > &nbsp; &nbsp;
             <span class='message-data-name' >${data.username}</span > <i class='fa fa-circle ${status}' ></i >
             <img src = '${data.image_path}' class='chat-img' alt = 'test' >
-                </div >
-                <div class='message other-message float-right' > ${data.content}</div >
+                </div > <div class='message other-message float-right' > ${data.content}</div >
             </li >`;
             }
 
@@ -130,14 +156,14 @@ conn.onmessage = function(e) {
             var that = this;
             if(this.msg){
                 $.ajax({
-                    url:'http://localhost/chat/src/Api/MsgApi.php',
+                    url:'http://localhost/Chat/src/Api/MsgApi.php',
                     method:'POST',
                     data:this.msg,
                     success:function (data) {
-                            msg = {
-                                type:"chat",
-                                data:JSON.parse(data)
-                            };
+                        msg = {
+                            type:"chat",
+                            data:JSON.parse(data)
+                        };
 
                         conn.send(JSON.stringify(msg));
                     },
@@ -166,23 +192,30 @@ conn.onmessage = function(e) {
 
 
 
-        /*var searchFilter = {
-          options: { valueNames: ['name'] },
-          init: function() {
-            var userList = new List('people-list', this.options);
-            var noItems = $('<li id="no-items-found">No items found</li>');
+    var searchFilter = {
+      options: { valueNames: ['name'] },
+      init: function() {
+        var userList = document.querySelectorAll('#userslist li div.name');
+        //var noItems = $('<li id="no-items-found">NoN Voyant exist</li>');
 
-            userList.on('updated', function(list) {
-              if (list.matchingItems.length === 0) {
-                $(list.list).append(noItems);
-              } else {
-                noItems.detach();
-              }
-            });
-          }
-        };
+        $('#search').on('keyup', function(list) {
+            var filter =$(this).val().toUpperCase();
 
-        searchFilter.init();*/
+
+            for(var i=0;i<userList.length;i++){
+                var name = userList[i].textContent.toUpperCase();
+                var li  = userList[i].parentElement.parentElement;
+               if(name.indexOf(filter)>-1){
+
+                    li.style.display ="";
+               }else{
+                   li.style.display ="none";
+               }
+            }
+        });
+      }
+    };
+
 
 
 

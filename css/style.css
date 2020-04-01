@@ -3,7 +3,7 @@
    box-sizing: border-box;
 }
  body {
-   background: #fff;
+      background: linear-gradient(#e2e3e5,#bcbdc1);
    font: 14px/20px "Lato", Arial, sans-serif;
    padding: 10px 0;
    color: white;
@@ -22,24 +22,32 @@ ul {
 .rowChat{
   display: flex;
 }
+#pepoles {
+
+}
 #blockChat.col-9{
 flex:  0 0 75%;
   }
   #peoples.col-3  {
     flex: 0 0 25%;
+      background-color: #57adcc;
   }
 
  .people-list .search {
    padding: 20px;
 }
+.people-list input::placeholder{
+    color: white;
+  }
  .people-list input {
    border-radius: 3px;
    border: none;
    padding: 14px;
    color: white;
-   background: #6a6c75;
+       background: #68a0b9f5;
    width: 90%;
    font-size: 14px;
+}
 }
  .people-list .fa-search {
    position: relative;
@@ -54,6 +62,7 @@ flex:  0 0 75%;
 }
  .people-list img {
    float: left;
+       border-radius: 50%;
 }
  .people-list .about {
    float: left;
@@ -63,11 +72,11 @@ flex:  0 0 75%;
    padding-left: 8px;
 }
  .people-list .status {
-   color: #92959e;
+   color: white;
 }
  .chat {
 
-   background: #f2f5f8;
+   background: #e5ecf1;
    border-top-right-radius: 5px;
    border-bottom-right-radius: 5px;
    color: #434651;
@@ -129,12 +138,12 @@ flex:  0 0 75%;
    width: 0;
    position: absolute;
    pointer-events: none;
-   border-bottom-color: #86bb71;
+   border-bottom-color: #769bac;
    border-width: 10px;
    margin-left: -10px;
 }
  .chat .chat-history .my-message {
-   background: #86bb71;
+       background: #769bac;
 }
  .chat .chat-history .other-message {
    background: #fff;
@@ -162,18 +171,25 @@ flex:  0 0 75%;
    cursor: pointer;
 }
  .chat .chat-message button {
-   float: right;
-   color: #000;
-   font-size: 16px;
-   text-transform: uppercase;
-   border: none;
-   cursor: pointer;
-   font-weight: bold;
-   background: #f2f5f8;
+       float: right;
+    color: white;
+    font-size: 16px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    background: #57adcc;
+    padding: 10px;
+    border-radius: 10px;
 }
- .chat .chat-message button:hover {
-   color: #000;
+.footer-content {
+    text-align: center;
+    background-color: #e5ecf1;
 }
+.footer-content img {
+    height: 120px;
+}
+
  .online, .offline, .me {
    margin-right: 3px;
    font-size: 10px;
@@ -218,6 +234,9 @@ flex:  0 0 75%;
     height: 20px;
     vertical-align: bottom;
 }
+
+
+
 .btn {
     display: inline-block;
     font-weight: 400;
@@ -253,3 +272,4 @@ button, input {
     line-height: 1.5;
     border-radius: .2rem;
 }
+
