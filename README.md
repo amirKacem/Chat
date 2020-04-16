@@ -1,2 +1,2 @@
 # Chat
-Chat app using Rathcet
+Chat app using Ratchet WebSockets for PHP
