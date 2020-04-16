@@ -55,7 +55,9 @@ if(!isset($_SESSION['user'])) {
                 </ul>
             </div>
 
-
+                <a href="https://www.lumierevoyance.com/forfaits-voyance/" target="_blank">
+                    <img class="forfait" src="img/forfaitEco.jpg" alt="FORFAIT" >
+                </a>
 
         </div>
         <div class="col-md-10 col-sm-9" id="blockChat">
@@ -96,7 +98,38 @@ if(!isset($_SESSION['user'])) {
             </div>
         </div> <!-- end chat -->
     </div>
+    <footer>
 
+        <div class="footer-content">
+
+            <div class="col3 col-sm-12">
+
+                <div id="numeros">
+                    <div class="block-num">
+                        <img src="img/su.png" alt="drapeau suisse" >
+                        <a href="tel:0901858858" class="btn-su">0901 858 858 (2Fr/min)</a>
+                    </div>
+                    <div class="block-num">
+                        <img src="img/be.png" alt="drapeau belgique">
+                        <a href="tel:090336288" class="btn-be">0903 36 288  (1.5€/min)</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col9 col-sm-12">
+                <div class="col6">
+                    <a href="tel:0170956898" class="banner"><img src="img/audiotel.jpg" alt="voyance audiotel"></a>
+                </div>
+                <div class="col6">
+                    <a href="tel:0890100015" class="banner"><img src="img/privée.jpg" alt="voyance privée"></a>
+                </div>
+                <div class="clear"></div>
+
+
+            </div>
+
+            <div class="clear"></div>
+        </div>
+    </footer>
 </div> <!-- end container -->
 
 <script
