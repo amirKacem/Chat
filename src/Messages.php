@@ -65,18 +65,18 @@ class Messages
 
 
     public function save() {
-        $sql = "INSERT INTO `messages`(`id`,`content`,`user_id`,`date_send`) VALUES (null, ?, ?,?)";
+        $sql = "INSERT INTO `messages`(`id`,`content`,`user_id`,`date_send`) VALUES (null, ?, ?,NOW())";
 
         $data = [ 'content'=> $this->content,
-                    'user_id'=>$this->user_id,
-            'date_send'=>$this->date_send
+                    'user_id'=>$this->user_id
+
         ];
         $format = new Format();
         $format->allvalidation($data);
         $stmt = $this->db->query($sql,$data);
         if($stmt){
             $msg_id = $stmt->getLastInsertId();
-            $sql = "SELECT  m.content,m.date_send,u.username,u.image_path,u.type,u.loginStatus,u.lastLogin from messages m join users u on m.user_id=u.id where m.id=?";
+            $sql = "SELECT  u.id,m.content,m.date_send,u.username,u.image_path,u.type,u.loginStatus,u.lastLogin from messages m join users u on m.user_id=u.id where m.id=?";
             $user_msg = $this->db->query($sql,[$msg_id])->result();
             return $user_msg;
         }else{
@@ -85,7 +85,7 @@ class Messages
     }
 
     public function getAllUserMsg(){
-        $sql = "SELECT  m.content,m.date_send,u.username,u.image_path,u.type,u.loginStatus,u.lastLogin from messages m join users u on m.user_id=u.id order by m.date_send";
+        $sql = "SELECT  m.content,m.date_send,u.username,u.image_path,u.type,u.loginStatus,u.lastLogin from messages m join users u on m.user_id=u.id where u.status='ON' order by m.date_send";
 
         return $this->db->query($sql)->results();
 

@@ -1,6 +1,6 @@
 <?php
 namespace MyChat\Api;
-header("Access-Control-Allow-Origin: http://localhosts");
+header("Access-Control-Allow-Origin: http://localhost");
 
 require dirname(dirname(__DIR__) ). '/vendor/autoload.php';
 use MyChat\Messages;

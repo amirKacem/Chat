@@ -18,15 +18,21 @@ if (isset($_POST['login'])) {
         if ($user->updateLoginStatus()) {
             $key = 'password';
             unset($userData->$key);
+            unset($_SESSION['Loginerreur']);
             $_SESSION['user'] = $userData;
-            header("location: index.php");
+            header("location: ./");
         } else {
-            $erreur = "Failed to login.";
+             $_SESSION['Loginerreur'] = "Failed to login.";
+
+            header("location:./");
         }
 
-    }
     }else{
-        $erreur =  "Invalid nom d'utilisateur ou Mot de Passe";
+        $_SESSION['Loginerreur'] =  "Invalid nom d'utilisateur ou Mot de Passe";
+        header("location:./");
+
+
+    }
     }
 }
 
@@ -36,17 +42,28 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $image = $_POST['image'];
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
+    $tel = $_POST['tel'];
     $user->setPassword($password);
     $user->setEmail($email);
     $user->setName($username);
     $user->setImagePath($image);
     $user->setLoginStatus(1);
     $user->setLastLogin(date('Y-m-d h:i:s'));
+    $user->setFirstname($firstname);
+    $user->setLastname($lastname);
+    $user->setTel($tel);
     if ($userData = $user->save()) {
         $_SESSION['user'] = $userData;
-        header("location:/Chat");
+        unset($_SESSION["erreur"]);
+        header("location:./");
     } else {
-        $erreur = "nom d'utilisateur existe déjà";
+
+        $_SESSION['erreur'] ="nom d'utilisateur existe déjà";
+        header("location:./");
+
+
     }
 }
 }
@@ -54,6 +71,7 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="assets/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
     <link href="assets/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
     <!-- Font special for pages-->
@@ -89,9 +107,30 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
                                     <input class="input--style-4" type="email" name="email">
                                 </div>
                             </div>
+                        <div class="row row-space">
+                            <div class="col-3 col-sm-2">
+                                <div class="input-group">
+                                    <label class="label">Prenom</label>
+                                    <input class="input--style-4" type="text" name="firstname">
+                                </div>
+                            </div>
+                            <div class="col-3 col-sm-2">
+                                <div class="input-group">
+                                    <label class="label">nom</label>
+                                    <input class="input--style-4" type="text" name="lastname">
+                                </div>
+                            </div>
+
+
+                            <div class="col-3 col-sm-12">
+                                <div class="input-group">
+                                    <label class="label">Tel</label>
+                                    <input class="input--style-4" type="tel" name="tel">
+                                </div>
+                            </div>
 
                         </div>
-
+                        </div>
                         <div class="row row-space">
 
 
@@ -99,22 +138,22 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
                             <div class="input-group" style="margin: auto;text-align: center;">
                                 <label class="label">Image</label>
                                 <div class="p-t-10">
-                                    <label class="radio-container m-r-45">
+                                    <label class="radio-container m-r-45 mr-sm-0">
                                         <input type="radio" checked="checked" name="image" value="female">
                                         <img src="img/female.png" alt="female">
                                         <span class="checkmark"></span>
                                     </label>
-                                    <label class="radio-container m-r-45">
+                                    <label class="radio-container m-r-45 mr-sm-0">
                                         <input type="radio" name="image" value="chat">
                                         <img src="img/chat.png" alt="chat">
                                         <span class="checkmark"></span>
                                     </label>
-                                    <label class="radio-container m-r-45">
+                                    <label class="radio-container m-r-45 mr-sm-0">
                                         <input type="radio" name="image" value="woman">
                                         <img src="img/woman.png" alt="woman">
                                         <span class="checkmark"></span>
                                     </label>
-                                    <label class="radio-container m-r-45">
+                                    <label class="radio-container m-r-45 mr-sm-0">
                                         <input type="radio" name="image" value="conversation">
                                         <img src="img/conversation.png" alt="conversation">
                                         <span class="checkmark"></span>
@@ -126,22 +165,28 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
 
                         </div>
                         <div class="row row-space m-t-20">
-                            <div class="col-2">
+                            <div class="col-2 col-sm-12">
                                 <div class="input-group">
                                     <label class="label">Mot De Passe</label>
                                     <input class="input--style-4" type="password" name="password" id="pass">
                                 </div>
                             </div>
-                            <div class="col-2">
+                            <div class="col-2 col-sm-12">
                                 <div class="input-group">
                                     <label class="label">Confirm Mot De Passe</label>
                                     <input class="input--style-4" type="password" name="cpassword">
                                 </div>
                             </div>
                         </div>
+                        <?php
+                        if(isset($_SESSION['erreur'])){
+                            echo "  <p class='text-danger text-center p-t-20 '>{$_SESSION['erreur']}</p>";
+                        }
+                        ?>
                         <div class="p-t-15" style="text-align: center;">
                             <button name="Register" class="btn btn--radius-2 btn--blue" type="submit">Envoyer</button>
                         </div>
+
                     </form>
                 </div>
                 <div id="Connexion">
@@ -156,8 +201,8 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
 
                         </div>
                         <?php
-                        if(isset($erreur)){
-                            echo "  <p class='text-danger text-center p-t-20 '>{$erreur}</p>";
+                        if(isset($_SESSION['Loginerreur'])){
+                            echo "  <p class='text-danger text-center p-t-20 '>{$_SESSION['Loginerreur']}</p>";
                         }
                         ?>
                         <div class="p-t-15" style="text-align: center;">

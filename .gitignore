@@ -5,3 +5,8 @@ vendor
 .composer.json.swp
 img/audiotel.jpg
 img/privée.jpg
+img/be.png
+img/su.png
+img/FORFAIT.jpg
+img/forfaitEco.jpg
+*.sql

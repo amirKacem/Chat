@@ -78,7 +78,7 @@ class Db{
 
                     return false;
                 } else {
-                    //throw $e;
+                    throw $e;
          
                     return false;
                 }

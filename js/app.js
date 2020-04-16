@@ -1,46 +1,70 @@
 $(function() {
-// connect to the socket server
+    var user_id = $('#user_id').val();
 
-var conn = new WebSocket('ws://localhost:8083');
+// connect to the socket server
+    var  conn = new WebSocket('ws://localhost:8083');
+function startSocket(){
+     conn = new WebSocket('ws://localhost:8083');
 
     conn.onopen = function(e) {
-
         var d = new Date(); // for now
         datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
 
-    }
+        conn.send(JSON.stringify({type:"subscribe",userId:user_id}));
+
+    };
 
     conn.onerror = function(e) {
         console.log('Error: Could not connect to server.');
-    }
+    };
 
     conn.onclose = function(e) {
         console.log('Connection closed'+e);
         var timestamp = '[' + Date.now() + '] ';
         var d = new Date(); // for now
         datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-        console.log(datetext);
-        location.reload(true);
+
+        conn = null;
+        setTimeout(function(){
+            console.log("reconnect");
+            startSocket();
+        },5000);
 
 
-    }
+    };
 
 // handle new message received from the socket server
     conn.onmessage = function(e) {
         // message is data property of event object
         var message = JSON.parse(e.data);
+        console.log(message);
         if(message.type==="chat"){
 
+            if(message.data.id !== user_id){
+
+                if(Notif.request()){
+                    Notif.send();
+                }
+                var audio = new Audio();
+                audio.src = "assets/audio/audio.mp3";
+                audio.play();
+            }
             chat.render(message.data);
-        }else if(message.type==="connect" || message.type==="disconnect"){
+        }else if(message.type==="subscribe" || message.type==="disconnect"){
 
             chat.renderUsers(message.voyants);
+            if(message.type==="subscribe"){
+            chat.renderMessages(message.messages);
+            }
         }
 
 
-    }
+    };
 
-    var user_id = $('#user_id').val();
+}
+    startSocket();
+
+
     $('.message-form').on('submit', function(e) {
         // prevent form submission which causes page reload
         e.preventDefault();
@@ -85,7 +109,36 @@ var conn = new WebSocket('ws://localhost:8083');
         msg: {},
 
         responseData:{},
-        init: function(){
+        renderMessages : function(messages){
+            var html='',status;
+            messages.forEach(function(userMsg){
+                if(userMsg.loginStatus==1){
+                    status='online';
+                }else{
+                    status='offline';
+                }
+                if(userMsg.type=="V"){
+                    html += `<li>
+                    <div class='message-data'>
+                    <span class='message-data-name'>
+                    <img src='${userMsg.image_path}' class='chat-img' alt='test'>
+                    <i class='fa fa-circle ${status}'></i>  ${userMsg.username}</span>
+                <span class='message-data-time'>${userMsg.date_send}</span>
+                </div>
+                <div class='message my-message'> ${userMsg.content}</div>
+                </li>`;
+                }else{
+                    html += ` <li class='clearfix' >
+                        <div class='message-data align-right' >
+                        <span class='message-data-time' > ${userMsg.date_send} </span > &nbsp; &nbsp;
+                <span class='message-data-name' >${userMsg.username}</span > <i class='fa fa-circle ${status}' ></i >
+                <img src = '${userMsg.image_path}' class='chat-img' alt = 'test' >
+                    </div > <div class='message other-message float-right' > ${userMsg.content}</div >
+                </li >`;
+                }
+            });
+
+            $('ul.message-list').html(html);
             this.scrollToBottom();
         },
         renderUsers:function(users){
@@ -125,7 +178,7 @@ var conn = new WebSocket('ws://localhost:8083');
                 html = `<li>
                 <div class='message-data'>
                 <span class='message-data-name'>
-                <img src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg' class='chat-img' alt='test'>
+                <img src='${data.image_path}' class='chat-img' alt='test'>
                 <i class='fa fa-circle ${status}'></i>  ${data.username}</span>
             <span class='message-data-time'>${data.date_send}</span>
             </div>
@@ -134,7 +187,7 @@ var conn = new WebSocket('ws://localhost:8083');
             }else{
                 html = ` <li class='clearfix' >
                     <div class='message-data align-right' >
-                    <span class='message-data-time' > ${data.username} </span > &nbsp; &nbsp;
+                    <span class='message-data-time' > ${data.date_send} </span > &nbsp; &nbsp;
             <span class='message-data-name' >${data.username}</span > <i class='fa fa-circle ${status}' ></i >
             <img src = '${data.image_path}' class='chat-img' alt = 'test' >
                 </div > <div class='message other-message float-right' > ${data.content}</div >
@@ -152,7 +205,7 @@ var conn = new WebSocket('ws://localhost:8083');
             };
         },
         sendMessage: function() {
-            console.log(this.msg);
+
             var that = this;
             if(this.msg){
                 $.ajax({
@@ -188,15 +241,12 @@ var conn = new WebSocket('ws://localhost:8083');
     };
 
 
-    chat.init();
-
-
 
     var searchFilter = {
       options: { valueNames: ['name'] },
       init: function() {
         var userList = document.querySelectorAll('#userslist li div.name');
-        //var noItems = $('<li id="no-items-found">NoN Voyant exist</li>');
+
 
         $('#search').on('keyup', function(list) {
             var filter =$(this).val().toUpperCase();
@@ -217,7 +267,50 @@ var conn = new WebSocket('ws://localhost:8083');
     };
 
 
+    // Notfication
+  var  Notif = {
 
+      request: function()  {
+
+          // Vérifier que l'objet existe
+          if (typeof Notification === undefined) {
+              return false;
+          }
+
+
+          if (Notification.permission == "granted") {
+              return true;
+          } else {
+              Notification.requestPermission(function (result) {
+
+                  if (result == "granted") {
+                      return true
+                  } else {
+                      return false;
+                  }
+              });
+          }
+      },
+      send: function () {
+          var options = {
+              "lang": "FR",
+              "icon": "/favicon.ico",
+              "tag": new Date(),
+              "body": "Nouveau message dans le salon de tchat"
+          };
+
+          var notif = new Notification("Salon de chat", options);
+
+          notif.onclick = function (event) {
+              event.preventDefault();
+              window.open("https://www.voyanceenligne.chat", "_blank");
+          }
+      }
+  };
 
 
 });
+
+
+
+
