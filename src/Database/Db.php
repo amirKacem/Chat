@@ -8,9 +8,11 @@ class Db{
     private $pass = '' ;
     private $dbname = 'chat' ;
     private $connection;
+    private $query;
     private $error;
     private static $instance;
     private $lastInsertId;
+
 
 
     /**
@@ -78,7 +80,7 @@ class Db{
 
                     return false;
                 } else {
-                    throw $e;
+                    //throw $e;
          
                     return false;
                 }

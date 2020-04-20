@@ -149,8 +149,12 @@ VALUES (null, ?, ?, ?, ?,?,?,?,?,?,?)";
 
             $stmt = $this->db->query('SELECT * FROM users WHERE username =? AND password=? AND status=? ',$data);
 
-            if($stmt->RowCount()>0){
-                return $stmt->result();
+            if($stmt){
+                if($stmt->RowCount()>0){
+                    return $stmt->result();
+                }else{
+                    return false;
+                }
             }else{
                 return false;
             }
