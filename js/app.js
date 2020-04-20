@@ -47,7 +47,13 @@ function startSocket(){
                 }
                 var audio = new Audio();
                 audio.src = "assets/audio/audio.mp3";
-                audio.play();
+                var playPromise = audio.play();
+
+                if(playPromise!== undefined){
+                    playPromise.catch( () => {
+                        audio.play();
+                    });
+                }
             }
             chat.render(message.data);
         }else if(message.type==="subscribe" || message.type==="disconnect"){
